@@ -1,9 +1,18 @@
+import 'package:built_collection/built_collection.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pet_care/widgets/widgets.dart';
+import 'package:pet_repository/pet_repository.dart';
 
+import 'firebase_options.dart';
 import 'models/models.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -35,23 +44,49 @@ class MyApp extends StatelessWidget {
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final fifi =
-        HomeCardModel(title: "Fifi", location: "Cumbres", photo: "photo.jpeg");
-    final fifiWidget = HomeCardWidget(model: fifi);
-    final oreo =
-        HomeCardModel(title: "Oreo", location: "Cumbres", photo: "oreo.jpeg");
-    final oreoWidget = HomeCardWidget(model: oreo);
-    final oli =
-        HomeCardModel(title: "Oli", location: "Grulla", photo: "oli.jpeg");
-    final oliWidget = HomeCardWidget(model: oli);
-    final ratona = HomeCardModel(
-        title: "Ratona", location: "Grulla", photo: "ratona.jpeg");
-    final ratonaWidget = HomeCardWidget(model: ratona);
-    final ayaka =
-        HomeCardModel(title: "Ayaka", location: "Cumbres", photo: "ayaka.jpeg");
-    final ayakaWidget = HomeCardWidget(model: ayaka);
-    return ListView(
-      children: [fifiWidget, oreoWidget, oliWidget, ratonaWidget, ayakaWidget],
+    return const PetListWidget();
+  }
+}
+
+class PetListWidget extends StatefulWidget {
+  const PetListWidget({Key? key}) : super(key: key);
+
+  @override
+  _PetListWidgetState createState() => _PetListWidgetState();
+}
+
+class _PetListWidgetState extends State<PetListWidget> {
+  late PetRepository petRepository;
+  late Stream petStream;
+  @override
+  void initState() {
+    petRepository = FirebasePetRepository();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<BuiltList<Pet>>(
+      stream: petRepository.pets(),
+      builder: (BuildContext context, AsyncSnapshot<BuiltList<Pet>> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("Loading");
+        }
+
+        return ListView(
+            children: snapshot.data!.map((Pet pet) {
+          return HomeCardWidget(
+              model: HomeCardModel(
+            title: pet.name,
+            location: pet.location,
+            photo: pet.photoUrl,
+          ));
+        }).toList());
+      },
     );
   }
 }

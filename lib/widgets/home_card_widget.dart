@@ -17,6 +17,7 @@ class HomeCardWidget extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
                 backgroundColor: Colors.blue,
+                backgroundImage: NetworkImage(model.photo),
               ),
             ),
             Column(
