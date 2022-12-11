@@ -14,12 +14,18 @@ dependencies:
     sdk: flutter
   built_collection: ^5.1.1 
   cupertino_icons: ^1.0.2
+  flutter_bloc: ^8.1.1
   equatable: ^2.0.3
+  flow_builder: ^0.0.6
+  reactive_forms: ^14.1.0
   # Firebase
-  firebase_core: ^1.11.0
-  cloud_firestore: ^3.1.6
+  firebase_core: ^1.22.0
+  cloud_firestore: ^3.4.8
   pet_repository:
     path: packages/pet_repository
+  user_repository:
+    path: packages/user_repository
+  flutterfire_ui: ^0.4.3+14
 
 dev_dependencies:
   flutter_test:

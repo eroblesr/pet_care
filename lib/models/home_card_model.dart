@@ -13,4 +13,6 @@ class HomeCardModel extends Equatable {
 
   @override
   List<Object?> get props => [title, location, photo];
+
+  static page() {}
 }

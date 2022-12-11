@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "187848207220",
+    "project_id": "love-of-care",
+    "storage_bucket": "love-of-care.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187848207220:android:747f55749bb1c694109a21",
+        "android_client_info": {
+          "package_name": "com.example.pet_care"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "187848207220-a4r8r9b5e9amqnqjr71f73iel1p72h9o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjyggg4foMpgd1_dnGvCY2VF01HkCCu_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "187848207220-a4r8r9b5e9amqnqjr71f73iel1p72h9o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "187848207220-qge9um1s65apid1qn3s8pa1v18g5hkcr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.petcare"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
