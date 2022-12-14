@@ -35,7 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Signup')),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: BlocProvider<SignupCubit>(
@@ -161,7 +161,7 @@ class _SignupScreenState extends State<SignupScreen> {
             onPressed: () {
               context.read<SignupCubit>().signupFormSubmitted();
             },
-            child: const Text('Signup'),
+            child: const Text('Sign Up'),
           );
   }
 }

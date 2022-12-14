@@ -26,3 +26,12 @@ class UserSignedUp extends AppEvent {
   @override
   List<Object> get props => [user];
 }
+
+class UserLoggedIn extends AppEvent {
+  final User user;
+
+  const UserLoggedIn(this.user);
+
+  @override
+  List<Object> get props => [user];
+}

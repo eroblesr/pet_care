@@ -26,6 +26,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppUserChanged>(_onUserChanged);
     on<AppLogoutRequest>(_onLogoutRequest);
     on<UserSignedUp>(_onUserSignedUp);
+    on<UserLoggedIn>(_userloggedIn);
   }
   void _onUserSignedUp(
     UserSignedUp event,
@@ -51,4 +52,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   ) {
     unawaited(_authRepository.logOut());
   }
+}
+
+void _userloggedIn(
+  UserLoggedIn event,
+  Emitter<AppState> emit,
+) {
+  emit(event.user.isNotEmpty
+      ? AppState.authenticated(event.user)
+      : const AppState.unauthenticated());
 }

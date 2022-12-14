@@ -39,15 +39,20 @@ class AuthRepository {
     return User.empty;
   }
 
-  Future<void> logInWithEmailAndPassword({
+  Future<User> logInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     {
       try {
-        await _firebaseAuth.signInWithEmailAndPassword(
+        final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
             email: email, password: password);
-      } catch (_) {}
+        final user = userCredential.user?.toUser ?? User.empty;
+        return user;
+      } catch (error) {
+        debugPrint(error.toString());
+      }
+      return User.empty;
     }
   }
 
