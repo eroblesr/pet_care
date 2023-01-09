@@ -7,17 +7,19 @@ class UserEntity extends Equatable {
   const UserEntity({
     required this.id,
     required this.name,
+    required this.phoneNumber,
     required this.location,
     required this.photoUrl,
   });
 
   final String id;
   final String? name;
+  final String? phoneNumber;
   final String? location;
   final String? photoUrl;
 
   @override
-  List<Object?> get props => [id, name, location, photoUrl];
+  List<Object?> get props => [id, name, phoneNumber, location, photoUrl];
 
   static UserEntity fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -25,6 +27,7 @@ class UserEntity extends Equatable {
     return UserEntity(
       id: snapshot.id,
       name: userData['name'] as String,
+      phoneNumber: userData['phoneNumber'] as String,
       location: userData['location'] as String,
       photoUrl: userData['photoUrl'] as String,
     );
@@ -33,6 +36,7 @@ class UserEntity extends Equatable {
   Map<String, Object> toDocument() {
     return {
       'name': name ?? '',
+      'phoneNumber': phoneNumber ?? '',
       'location': location ?? '',
       'photoUrl': photoUrl ?? '',
     };

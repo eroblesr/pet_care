@@ -6,6 +6,7 @@ class SignupState extends Equatable {
   final String email;
   final String password;
   final String name;
+  final String phoneNumber;
   final SignupStatus status;
   final User? user;
 
@@ -13,6 +14,7 @@ class SignupState extends Equatable {
     required this.email,
     required this.password,
     required this.name,
+    required this.phoneNumber,
     required this.status,
     this.user = User.empty,
   });
@@ -22,6 +24,7 @@ class SignupState extends Equatable {
       email: '',
       password: '',
       name: '',
+      phoneNumber: '',
       user: User.empty,
       status: SignupStatus.initial,
     );
@@ -30,6 +33,7 @@ class SignupState extends Equatable {
     String? email,
     String? password,
     String? name,
+    String? phoneNumber,
     User? user,
     SignupStatus? status,
   }) {
@@ -37,11 +41,12 @@ class SignupState extends Equatable {
       email: email ?? this.email,
       password: password ?? this.password,
       name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       user: user ?? this.user,
       status: status ?? this.status,
     );
   }
 
   @override
-  List<Object?> get props => [email, password, name, user, status];
+  List<Object?> get props => [email, password, name, phoneNumber, user, status];
 }

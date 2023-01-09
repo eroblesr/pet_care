@@ -31,10 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "187848207220-qge9um1s65apid1qn3s8pa1v18g5hkcr.apps.googleusercontent.com",
+              "client_id": "187848207220-i89qg73tom7bu0ha6ktiltk01lsv9qvc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.petcare"
+                "bundle_id": "com.example.petCare"
               }
             }
           ]

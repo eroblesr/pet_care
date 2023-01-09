@@ -8,19 +8,22 @@ class User extends Equatable {
   const User({
     required this.id,
     required this.name,
+    required this.phoneNumber,
     required this.location,
     required this.photoUrl,
   });
 
   final String id;
   final String name;
+  final String phoneNumber;
   final String location;
   final String photoUrl;
 
   @override
-  List<Object> get props => [id, name, location, photoUrl];
+  List<Object> get props => [id, name, phoneNumber, location, photoUrl];
 
-  static const User empty = User(id: '', name: '', location: '', photoUrl: '');
+  static const User empty =
+      User(id: '', name: '', phoneNumber: '', location: '', photoUrl: '');
 
   bool get isNotEmpty => id.isNotEmpty;
 
@@ -28,6 +31,7 @@ class User extends Equatable {
     return UserEntity(
       id: id,
       name: name,
+      phoneNumber: phoneNumber,
       location: location,
       photoUrl: photoUrl,
     );
@@ -37,6 +41,7 @@ class User extends Equatable {
     return User(
       id: userEntity.id,
       name: userEntity.name ?? '',
+      phoneNumber: userEntity.phoneNumber ?? '',
       location: userEntity.location ?? '',
       photoUrl: userEntity.photoUrl ?? '',
     );
@@ -45,12 +50,14 @@ class User extends Equatable {
   User copyWith({
     String? id,
     String? name,
+    String? phoneNumber,
     String? location,
     String? photoUrl,
   }) {
     return User(
       id: id ?? this.id,
       name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       location: location ?? this.location,
       photoUrl: photoUrl ?? this.photoUrl,
     );

@@ -26,6 +26,7 @@ dependencies:
   user_repository:
     path: packages/user_repository
   flutterfire_ui: ^0.4.3+14
+  intl_phone_number_input: ^0.7.1
 
 dev_dependencies:
   flutter_test:

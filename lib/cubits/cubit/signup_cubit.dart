@@ -39,12 +39,24 @@ class SignupCubit extends Cubit<SignupState> {
     );
   }
 
+  void phoneChanged(String value) {
+    emit(
+      state.copyWith(
+        phoneNumber: value,
+        status: SignupStatus.initial,
+      ),
+    );
+  }
+
   Future<void> signupFormSubmitted() async {
     if (state.status == SignupStatus.submitting) return;
     emit(state.copyWith(status: SignupStatus.submitting));
     try {
       final user = await _authRepository.signup(
-          email: state.email, password: state.password, name: state.name);
+          email: state.email,
+          password: state.password,
+          name: state.name,
+          phoneNumber: state.phoneNumber);
       _userRepository.addUser(user.toEntity());
 
       emit(state.copyWith(status: SignupStatus.sucess, user: user));

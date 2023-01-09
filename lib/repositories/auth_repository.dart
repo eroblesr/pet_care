@@ -25,6 +25,7 @@ class AuthRepository {
 
   Future<User> signup({
     required String email,
+    required String phoneNumber,
     required String password,
     required String name,
   }) async {
@@ -32,7 +33,7 @@ class AuthRepository {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
       final user = userCredential.user?.toUser ?? User.empty;
-      return user.copyWith(name: name);
+      return user.copyWith(name: name, phoneNumber: phoneNumber);
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -68,6 +69,7 @@ extension on firebase_auth.User {
     return User(
         id: uid,
         name: displayName ?? '',
+        phoneNumber: '',
         location: '',
         photoUrl: photoURL ?? '');
   }

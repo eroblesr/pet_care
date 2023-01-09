@@ -6,6 +6,7 @@ import 'package:pet_care/cubits/cubit/signup_cubit.dart';
 import 'package:pet_care/repositories/auth_repository.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -22,13 +23,19 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
     // creates a group
+    final phonePattern = r'^(?:[+0]9)?[0-9]{10}$';
     form = FormGroup({
       'name': FormControl<String>(value: '', validators: [Validators.required]),
+      'phoneNumber': FormControl<String>(
+          validators: [Validators.required, Validators.pattern(phonePattern)]),
       'email': FormControl<String>(
           value: '', validators: [Validators.required, Validators.email]),
       'password': FormControl<String>(
           validators: [Validators.required, Validators.minLength(8)]),
-    });
+      'passwordConfirmation': FormControl<String>(),
+    }, validators: [
+      _mustMatch('password', 'passwordConfirmation')
+    ]);
     super.initState();
   }
 
@@ -54,17 +61,23 @@ class _SignupScreenState extends State<SignupScreen> {
               builder: (context, state) {
                 return ReactiveForm(
                   formGroup: form,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _name(context),
-                      const SizedBox(height: 10),
-                      _email(context),
-                      const SizedBox(height: 10),
-                      _password(context),
-                      const SizedBox(height: 10),
-                      _signup(context, state),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _name(context),
+                        const SizedBox(height: 10),
+                        _phoneNumber(context),
+                        const SizedBox(height: 10),
+                        _email(context),
+                        const SizedBox(height: 10),
+                        _password(context),
+                        const SizedBox(height: 10),
+                        _passwordConfirmation(context),
+                        const SizedBox(height: 10),
+                        _signup(context, state),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -94,6 +107,33 @@ class _SignupScreenState extends State<SignupScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         hintText: 'Password',
+        fillColor: Colors.grey[200],
+        filled: true,
+      ),
+    );
+  }
+
+  Widget _passwordConfirmation(BuildContext context) {
+    return ReactiveTextField(
+      formControlName: 'passwordConfirmation',
+      obscureText: true,
+      validationMessages: {
+        'required': (error) => 'The password must not be empty*',
+        'minLength': (error) => 'The password must have at least 8 characters*'
+      },
+      onChanged: (FormControl<String> formControl) {
+        context.read<SignupCubit>().passwordChanged(formControl.value ?? '');
+      },
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.deepPurple),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        hintText: 'Password Confirmation',
         fillColor: Colors.grey[200],
         filled: true,
       ),
@@ -151,6 +191,31 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  Widget _phoneNumber(BuildContext context) {
+    return ReactiveTextField(
+      formControlName: 'phoneNumber',
+      validationMessages: {
+        'required': (error) => 'The name must not be empty*'
+      },
+      onChanged: (FormControl<String> formControl) {
+        context.read<SignupCubit>().phoneChanged(formControl.value ?? '');
+      },
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.deepPurple),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        hintText: 'phone Number',
+        fillColor: Colors.grey[200],
+        filled: true,
+      ),
+    );
+  }
+
   Widget _signup(BuildContext context, SignupState state) {
     return state.status == SignupStatus.submitting
         ? const CircularProgressIndicator()
@@ -164,4 +229,24 @@ class _SignupScreenState extends State<SignupScreen> {
             child: const Text('Sign Up'),
           );
   }
+}
+
+ValidatorFunction _mustMatch(String controlName, String matchingControlName) {
+  return (AbstractControl<dynamic> control) {
+    final form = control as FormGroup;
+
+    final formControl = form.control(controlName);
+    final matchingFormControl = form.control(matchingControlName);
+
+    if (formControl.value != matchingFormControl.value) {
+      matchingFormControl.setErrors({'mustMatch': true});
+
+      // force messages to show up as soon as possible
+      matchingFormControl.markAsTouched();
+    } else {
+      matchingFormControl.removeError('mustMatch');
+    }
+
+    return null;
+  };
 }
