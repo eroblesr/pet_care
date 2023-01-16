@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterfire_ui/auth.dart';
@@ -6,7 +7,7 @@ import 'package:pet_care/repositories/auth_repository.dart';
 import 'package:pet_care/widgets/signup_screen.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:user_repository/user_repository.dart';
-
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import '../cubits/cubit/login_cubit.dart';
 
 class LoginPage extends StatefulWidget {
@@ -54,17 +55,19 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context, state) {
                 return ReactiveForm(
                   formGroup: form,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _email(context),
-                      const SizedBox(height: 10),
-                      _password(context),
-                      const SizedBox(height: 10),
-                      _LoginButton(context, state),
-                      const SizedBox(height: 8),
-                      _SignupButton(),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _email(context),
+                        const SizedBox(height: 10),
+                        _password(context),
+                        const SizedBox(height: 10),
+                        _LoginButton(context, state, form),
+                        const SizedBox(height: 8),
+                        _SignupButton(),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -127,7 +130,7 @@ Widget _password(BuildContext context) {
   );
 }
 
-Widget _LoginButton(BuildContext context, LoginState state) {
+Widget _LoginButton(BuildContext context, LoginState state, FormGroup form) {
   return state.status == LoginStatus.submitting
       ? const CircularProgressIndicator()
       : ElevatedButton(
@@ -135,7 +138,30 @@ Widget _LoginButton(BuildContext context, LoginState state) {
             fixedSize: const Size(200, 40),
           ),
           onPressed: () {
-            context.read<LoginCubit>().loginFormSubmitted();
+            if (form.valid) {
+              context.read<LoginCubit>().loginFormSubmitted();
+            } else {
+              final snackBar = SnackBar(
+                /// need to set following properties for best effect of awesome_snackbar_content
+                elevation: 0,
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.transparent,
+                content: AwesomeSnackbarContent(
+                  title: 'On Snap!',
+                  message: 'Please fill the missing fields!',
+
+                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                  contentType: ContentType.failure,
+                ),
+              );
+
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(snackBar);
+
+              //
+            }
+            ;
           },
           child: const Text('Log In'),
         );

@@ -5,18 +5,20 @@ import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_care/bloc/app/bloc/app_bloc.dart';
+import 'package:pet_care/bloc/bloc/pet_details_bloc.dart';
 import 'package:pet_care/config/routers.dart';
 import 'package:pet_care/repositories/auth_repository.dart';
 import 'package:pet_care/widgets/widgets.dart';
 import 'package:pet_repository/pet_repository.dart';
 import 'package:user_repository/user_repository.dart';
-
+import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'models/models.dart';
 
 Future<void> main() {
   return BlocOverrides.runZoned(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -48,7 +50,10 @@ class MyApp extends StatelessWidget {
         child: BlocProvider(
           create: (_) => AppBloc(
               authRepository: _authRepository, userRepository: _userRepository),
-          child: const AppView(),
+          child: BlocProvider(
+            create: (_) => PetDetailsBloc(),
+            child: AppView(),
+          ),
         ),
       ),
     );
@@ -63,7 +68,7 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: FlowBuilder(
-        state: context.select((AppBloc bloc) => bloc.state.status),
+        state: context.select((AppBloc bloc) => bloc.state),
         onGeneratePages: onGenerateAppViewPages,
       ),
     );

@@ -16,6 +16,8 @@ class Pet extends Equatable {
   final String location;
   final String photoUrl;
 
+  static const Pet empty = Pet(id: '', name: '', location: '', photoUrl: '');
+
   @override
   List<Object> get props => [id, name, location, photoUrl];
 

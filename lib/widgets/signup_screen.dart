@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +7,8 @@ import 'package:pet_care/cubits/cubit/signup_cubit.dart';
 import 'package:pet_care/repositories/auth_repository.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:flutter/services.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -22,8 +24,9 @@ class _SignupScreenState extends State<SignupScreen> {
   late FormGroup form;
   @override
   void initState() {
-    // creates a group
+    // phone regex
     final phonePattern = r'^(?:[+0]9)?[0-9]{10}$';
+    // creates a group
     form = FormGroup({
       'name': FormControl<String>(value: '', validators: [Validators.required]),
       'phoneNumber': FormControl<String>(
@@ -75,7 +78,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         const SizedBox(height: 10),
                         _passwordConfirmation(context),
                         const SizedBox(height: 10),
-                        _signup(context, state),
+                        _signup(context, state, form),
                       ],
                     ),
                   ),
@@ -194,9 +197,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget _phoneNumber(BuildContext context) {
     return ReactiveTextField(
       formControlName: 'phoneNumber',
-      validationMessages: {
-        'required': (error) => 'The name must not be empty*'
-      },
+      validationMessages: {'required': (error) => 'incorrect pattern*'},
       onChanged: (FormControl<String> formControl) {
         context.read<SignupCubit>().phoneChanged(formControl.value ?? '');
       },
@@ -216,7 +217,30 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _signup(BuildContext context, SignupState state) {
+  Timer scheduleTimeout([int milliseconds = 10000]) =>
+      Timer(Duration(milliseconds: milliseconds), handleTimeout);
+  void handleTimeout() {
+    final snackBar = SnackBar(
+      /// need to set following properties for best effect of awesome_snackbar_content
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: AwesomeSnackbarContent(
+        title: 'On Snap!',
+        message: 'Time is out, try again!',
+
+        /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+        contentType: ContentType.failure,
+      ),
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+    // callback function
+    // Do some work.
+  }
+
+  Widget _signup(BuildContext context, SignupState state, FormGroup form) {
     return state.status == SignupStatus.submitting
         ? const CircularProgressIndicator()
         : ElevatedButton(
@@ -224,7 +248,29 @@ class _SignupScreenState extends State<SignupScreen> {
               fixedSize: const Size(200, 40),
             ),
             onPressed: () {
-              context.read<SignupCubit>().signupFormSubmitted();
+              if (form.valid) {
+                //Flutter timer
+                scheduleTimeout(2 * 1000); // 5 seconds.
+                context.read<SignupCubit>().signupFormSubmitted();
+              } else {
+                final snackBar = SnackBar(
+                  /// need to set following properties for best effect of awesome_snackbar_content
+                  elevation: 0,
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.transparent,
+                  content: AwesomeSnackbarContent(
+                    title: 'On Snap!',
+                    message: 'Please fill the missing fields!',
+
+                    /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                    contentType: ContentType.failure,
+                  ),
+                );
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(snackBar);
+              }
+              ;
             },
             child: const Text('Sign Up'),
           );
